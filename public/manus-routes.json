@@ -1,0 +1,7 @@
+{
+  "routes": [
+    { "path": "/", "title": "ElanX Beverages" },
+    { "path": "/products", "title": "ElanX Products" },
+    { "path": "/about", "title": "Our Story — ElanX" }
+  ]
+}
