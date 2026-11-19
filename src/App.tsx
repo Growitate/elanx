@@ -429,9 +429,6 @@ function ProductsPage({
 
   const handleSelectCard = (flavor: Flavor) => {
     setSelected(flavor)
-    document
-      .getElementById('flavor-detail-panel')
-      ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }
 
   return (
@@ -504,7 +501,7 @@ function ProductsPage({
                 key={flavor.id}
                 flavor={flavor}
                 selected={selected.id === flavor.id}
-                ctaLabel={selected.id === flavor.id ? 'SELECTED' : 'INSPECT FLAVOUR'}
+                ctaLabel={selected.id === flavor.id ? 'SELECTED' : 'SELECT'}
                 onSelect={handleSelectCard}
               />
             ))}
@@ -512,74 +509,7 @@ function ProductsPage({
         </div>
       </section>
 
-      <WaveDivider topColor="#fde4d8" bottomColor={selected.detailBg} flip />
-
-      <section
-        id="flavor-detail-panel"
-        className="detail-band"
-        style={{ backgroundColor: selected.detailBg, color: selected.detailText }}
-      >
-        <div className="container detail-band__grid">
-          <div className="detail-band__visual">
-            <div className="detail-band__frame">
-              <img
-                src={selected.image}
-                alt={`ElanX ${selected.name} product shot`}
-              />
-            </div>
-          </div>
-
-          <div className="detail-band__copy">
-            <span className="pill-eyebrow pill-eyebrow--detail">
-              SIGNATURE POUR {selected.code} / 05
-            </span>
-            <h2>
-              <strong>{selected.name}</strong>
-              <span>for the moment</span>
-            </h2>
-            <p className="detail-band__desc">{selected.description}</p>
-
-            <div className="detail-facts">
-              <div>
-                <small>TASTE PROFILE</small>
-                <strong>{selected.taste}</strong>
-              </div>
-              <div>
-                <small>BEST FOR</small>
-                <strong>{selected.bestFor}</strong>
-              </div>
-              <div>
-                <small>SERVING NOTE</small>
-                <strong>{selected.pairing}</strong>
-              </div>
-            </div>
-
-            <div className="detail-band__actions">
-              <button
-                type="button"
-                className="pill-btn pill-btn--cream"
-                onClick={() => onNavigate('about')}
-              >
-                <span>Enquire for {selected.name}</span>
-                <ArrowUpRight size={15} />
-              </button>
-              <a
-                href={`https://wa.me/918339094094?text=${encodeURIComponent(
-                  `Hi ElanX, I'd like to enquire about stocking ElanX ${selected.name}.`
-                )}`}
-                target="_blank"
-                rel="noreferrer"
-                className="pill-btn pill-btn--outline-light"
-              >
-                <span>Order via WhatsApp</span>
-                <MessageCircle size={14} />
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <WaveDivider topColor={selected.detailBg} bottomColor="#fcf5ec" />
+      <WaveDivider topColor="#fde4d8" bottomColor="#fcf5ec" flip />
 
       <section className="range-summary-band">
         <div className="container range-summary-band__inner">
