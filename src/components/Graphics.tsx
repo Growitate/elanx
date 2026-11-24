@@ -1,6 +1,42 @@
 import { Play } from 'lucide-react'
+import { MEDIA } from '../data/elanx'
 
-export function InstagramIcon({ size = 13 }: { size?: number }) {
+/**
+ * Renders the ElanX brand logo either directly with transparency on coral hero
+ * headers or framed in a high-contrast coral badge on cream/dark surfaces.
+ */
+export function BrandLogo({
+  variant = 'transparent',
+  size = 'md',
+  decorative = false,
+  className = '',
+}: {
+  variant?: 'transparent' | 'badge'
+  size?: 'xs' | 'sm' | 'md' | 'lg'
+  decorative?: boolean
+  className?: string
+}) {
+  return (
+    <span
+      className={`brand-mark brand-mark--${variant} brand-mark--${size} ${className}`.trim()}
+      aria-hidden={decorative || undefined}
+    >
+      <img
+        src={MEDIA.brandLogo}
+        alt={decorative ? '' : 'ElanX Beverages logo'}
+        decoding="async"
+      />
+    </span>
+  )
+}
+
+export function InstagramIcon({
+  size = 13,
+  strokeWidth = 2,
+}: {
+  size?: number
+  strokeWidth?: number
+}) {
   return (
     <svg
       width={size}
@@ -8,7 +44,7 @@ export function InstagramIcon({ size = 13 }: { size?: number }) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="2"
+      strokeWidth={strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
@@ -71,7 +107,7 @@ export function PlayStoryBadge({ onClick }: { onClick: () => void }) {
         </text>
       </svg>
       <span className="play-ring-btn__core">
-        <Play size={15} fill="currentColor" strokeWidth={0} />
+        <Play size={22} fill="currentColor" strokeWidth={0} />
       </span>
     </button>
   )

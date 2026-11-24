@@ -1,8 +1,15 @@
-import heroCartonsImg from '../assets/hero-cartons.webp'
-import bentoHandPinkImg from '../assets/bento-hand-pink.webp'
-import bentoSkyHandsImg from '../assets/bento-sky-hands.webp'
+import elanxLogoImg from '../assets/elanx-logo.webp'
+import madeInOmanImg from '../assets/made-in-oman.webp'
+import heroTrioImg from '../assets/hero-chilled-trio.webp'
+import heroMobileTrioImg from '../assets/hero-mobile-trio.webp'
+import productsLineupImg from '../assets/products-lineup.webp'
+import iconGmailImg from '../assets/icon-gmail.png'
+import iconInstagramImg from '../assets/icon-instagram.png'
+import iconWhatsappImg from '../assets/icon-whatsapp.png'
+import bentoGardenLineupImg from '../assets/bento-garden-lineup.webp'
+import bentoTableTrioImg from '../assets/bento-table-trio.webp'
+import bentoGoldenStackImg from '../assets/bento-golden-stack.webp'
 import bentoFlatlayImg from '../assets/bento-flatlay-ingredients.webp'
-import bentoGridImg from '../assets/bento-grid-cartons.webp'
 import flavorColaImg from '../assets/flavor-cola.webp'
 import flavorLemonImg from '../assets/flavor-lemon.webp'
 import flavorOrangeImg from '../assets/flavor-orange.webp'
@@ -11,6 +18,24 @@ import flavorCoffeeColaImg from '../assets/flavor-coffee-cola.webp'
 
 export type Page = 'home' | 'products' | 'about'
 export type LegalKey = 'privacy' | 'terms' | 'disclaimer'
+
+export const WHATSAPP_NUMBER = '+968 90978626'
+export const WHATSAPP_TEL = '+96890978626'
+
+export const WHATSAPP_MESSAGES = {
+  general:
+    "Hello ElanX Beverages! ✨\n\nI’d love to learn more about your sparkling drink range and how to order or stock ElanX. Looking forward to connecting with you!",
+  products:
+    'Hello ElanX Beverages Team! ✨\n\nI’ve been exploring your signature sparkling range — Orange, Cola, Lemon, Blueberry & Coffee Cola — and would love to know more about your products, pricing, and ordering options.\n\nCould you please share your catalogue and availability? Thank you!',
+  contact:
+    'Hello ElanX Beverages Team! ✨\n\nI’m reaching out from your website regarding retail, hospitality, or distribution enquiries for ElanX Beverages. Could you please share your pricing and ordering details? Thank you!',
+} as const
+
+/** Builds a pre-filled WhatsApp click-to-chat URL for the official ElanX number. */
+export const whatsappHref = (message?: string): string =>
+  message
+    ? `https://wa.me/96890978626?text=${encodeURIComponent(message)}`
+    : 'https://wa.me/96890978626'
 
 export type Flavor = {
   id: string
@@ -44,11 +69,18 @@ export type Testimonial = {
 }
 
 export const MEDIA = {
-  heroCartons: heroCartonsImg,
-  bentoHandPink: bentoHandPinkImg,
-  bentoSkyHands: bentoSkyHandsImg,
+  brandLogo: elanxLogoImg,
+  madeInOman: madeInOmanImg,
+  gmailLogo: iconGmailImg,
+  whatsappLogo: iconWhatsappImg,
+  instagramLogo: iconInstagramImg,
+  heroCartons: heroTrioImg,
+  heroMobileCartons: heroMobileTrioImg,
+  productsLineup: productsLineupImg,
+  bentoGardenLineup: bentoGardenLineupImg,
+  bentoTableTrio: bentoTableTrioImg,
+  bentoGoldenStack: bentoGoldenStackImg,
   bentoFlatlay: bentoFlatlayImg,
-  bentoGrid: bentoGridImg,
 }
 
 export const FLAVORS: Flavor[] = [
@@ -63,11 +95,11 @@ export const FLAVORS: Flavor[] = [
     bestFor: 'Everyday enjoyment & meals',
     pairing: 'Chilled over clear ice with lime zest',
     image: flavorColaImg,
-    cardBg: '#be9880',
-    ctaBg: '#441b12',
-    detailBg: '#5a281d',
-    detailText: '#fff8f0',
-    accent: '#d8b29a',
+    cardBg: '#05054f',
+    ctaBg: '#ead4fb',
+    detailBg: '#d9b7f4',
+    detailText: '#32120a',
+    accent: '#eedcfc',
   },
   {
     id: 'lemon',
@@ -80,9 +112,9 @@ export const FLAVORS: Flavor[] = [
     bestFor: 'Hot-day refreshment & hospitality',
     pairing: 'Fresh mint sprig and crushed ice',
     image: flavorLemonImg,
-    cardBg: '#f8da98',
-    ctaBg: '#c96514',
-    detailBg: '#f4a622',
+    cardBg: '#013602',
+    ctaBg: '#fff1c2',
+    detailBg: '#f8da98',
     detailText: '#3b160d',
     accent: '#fff1c9',
   },
@@ -97,9 +129,9 @@ export const FLAVORS: Flavor[] = [
     bestFor: 'Afternoon resets & family tables',
     pairing: 'Chilled carton with an orange wheel',
     image: flavorOrangeImg,
-    cardBg: '#f8a59e',
-    ctaBg: '#d8303d',
-    detailBg: '#ef6b6d',
+    cardBg: '#690d02',
+    ctaBg: '#ffe0dc',
+    detailBg: '#f8a59e',
     detailText: '#3b160d',
     accent: '#ffd8d4',
   },
@@ -114,10 +146,10 @@ export const FLAVORS: Flavor[] = [
     bestFor: 'New flavour seekers & cafés',
     pairing: 'Served chilled in tall glassware',
     image: flavorBlueberryImg,
-    cardBg: '#b8d9ed',
-    ctaBg: '#176792',
-    detailBg: '#2b88ba',
-    detailText: '#fff8f0',
+    cardBg: '#013797',
+    ctaBg: '#d9effb',
+    detailBg: '#b8d9ed',
+    detailText: '#32120a',
     accent: '#d9effb',
   },
   {
@@ -131,34 +163,34 @@ export const FLAVORS: Flavor[] = [
     bestFor: 'Late-day momentum & creative spaces',
     pairing: 'Over a single large ice cube',
     image: flavorCoffeeColaImg,
-    cardBg: '#edd3b4',
-    ctaBg: '#5e2e16',
-    detailBg: '#9a5f3c',
-    detailText: '#fff8f0',
+    cardBg: '#461103',
+    ctaBg: '#f5dfc4',
+    detailBg: '#edd3b4',
+    detailText: '#32120a',
     accent: '#f7e4cd',
   },
 ]
 
 export const PILL_ROW_ONE: PillTag[] = [
-  { label: 'Five signature flavours', bg: '#d9534f', color: '#fff8f0' },
-  { label: 'Orange citrus lift', bg: '#4e2116', color: '#fff8f0' },
-  { label: 'Classic Cola depth', bg: '#f6cbd0', color: '#4e2116' },
-  { label: 'Crisp Lemon sparkle', bg: '#f5a61c', color: '#4e2116' },
-  { label: 'Blueberry lush', bg: '#bf282f', color: '#fff8f0' },
-  { label: 'Coffee Cola fusion', bg: '#ee777c', color: '#fff8f0' },
-  { label: 'Retail & wholesale', bg: '#df8b4a', color: '#fff8f0' },
-  { label: 'Refresh your energy', bg: '#f2dfd0', color: '#4e2116' },
+  { label: 'Five signature flavours', bg: '#fbd0d5', color: '#32120a' },
+  { label: 'Orange citrus lift', bg: '#d9ecf8', color: '#32120a' },
+  { label: 'Classic Cola depth', bg: '#f6cbd0', color: '#32120a' },
+  { label: 'Crisp Lemon sparkle', bg: '#f5a61c', color: '#32120a' },
+  { label: 'Blueberry lush', bg: '#e9d8fb', color: '#32120a' },
+  { label: 'Coffee Cola fusion', bg: '#ffe2c4', color: '#32120a' },
+  { label: 'Retail & wholesale', bg: '#fce4b8', color: '#32120a' },
+  { label: 'Refresh your energy', bg: '#f2dfd0', color: '#32120a' },
 ]
 
 export const PILL_ROW_TWO: PillTag[] = [
-  { label: 'Taste the difference', bg: '#f5a61c', color: '#4e2116' },
-  { label: 'Cafés & restaurants', bg: '#d9534f', color: '#fff8f0' },
-  { label: 'Supermarkets & retail', bg: '#4e2116', color: '#fff8f0' },
-  { label: 'Distributor ready', bg: '#f6cbd0', color: '#4e2116' },
-  { label: 'Young adults & families', bg: '#bf282f', color: '#fff8f0' },
-  { label: 'Vibrant carton design', bg: '#df8b4a', color: '#fff8f0' },
-  { label: 'Smooth crisp finish', bg: '#ee777c', color: '#fff8f0' },
-  { label: 'Chilled hospitality pours', bg: '#f2dfd0', color: '#4e2116' },
+  { label: 'Taste the difference', bg: '#f5a61c', color: '#32120a' },
+  { label: 'Cafés & restaurants', bg: '#fbd0d5', color: '#32120a' },
+  { label: 'Supermarkets & retail', bg: '#e9d8fb', color: '#32120a' },
+  { label: 'Distributor ready', bg: '#f6cbd0', color: '#32120a' },
+  { label: 'Young adults & families', bg: '#d9ecf8', color: '#32120a' },
+  { label: 'Vibrant can design', bg: '#fce4b8', color: '#32120a' },
+  { label: 'Smooth crisp finish', bg: '#ffe2c4', color: '#32120a' },
+  { label: 'Chilled hospitality pours', bg: '#f2dfd0', color: '#32120a' },
 ]
 
 export const TESTIMONIALS: Testimonial[] = [
@@ -203,7 +235,7 @@ export const AUDIENCES = [
   },
   {
     title: 'Distributors & wholesale',
-    detail: 'Dedicated partner support with direct ordering via email or WhatsApp at +91 83390 94094.',
+    detail: `Dedicated partner support with direct ordering via email or WhatsApp at ${WHATSAPP_NUMBER}.`,
   },
 ]
 
@@ -229,7 +261,7 @@ export const LEGAL_CONTENT: Record<LegalKey, { title: string; kicker: string; pa
     kicker: 'Disclaimer',
     paragraphs: [
       'Product descriptions are for brand and flavour communication. Packaging, availability, and product specifications may change as ElanX grows its range and distribution network.',
-      'For current retail, wholesale, and distribution information, contact elanx.beverages@gmail.com or +91 83390 94094.',
+      `For current retail, wholesale, and distribution information, contact elanx.beverages@gmail.com or ${WHATSAPP_NUMBER}.`,
     ],
   },
 }

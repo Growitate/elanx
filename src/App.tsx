@@ -22,11 +22,16 @@ import {
   PILL_ROW_ONE,
   PILL_ROW_TWO,
   TESTIMONIALS,
+  WHATSAPP_MESSAGES,
+  WHATSAPP_NUMBER,
+  WHATSAPP_TEL,
+  whatsappHref,
   type Flavor,
   type LegalKey,
   type Page,
 } from './data/elanx'
 import {
+  BrandLogo,
   FloatingBerriesProp,
   FloatingCaramelBeansProp,
   FloatingOrangeProp,
@@ -35,16 +40,40 @@ import {
   WaveDivider,
 } from './components/Graphics'
 
+const CONNECT_APPS = [
+  {
+    id: 'gmail',
+    label: 'Email elanx.beverages@gmail.com',
+    title: 'Gmail · elanx.beverages@gmail.com',
+    href: 'mailto:elanx.beverages@gmail.com',
+    icon: MEDIA.gmailLogo,
+    alt: 'Gmail',
+    external: false,
+  },
+  {
+    id: 'whatsapp',
+    label: `WhatsApp ${WHATSAPP_NUMBER}`,
+    title: `WhatsApp · ${WHATSAPP_NUMBER}`,
+    href: whatsappHref(WHATSAPP_MESSAGES.general),
+    icon: MEDIA.whatsappLogo,
+    alt: 'WhatsApp',
+    external: true,
+  },
+  {
+    id: 'instagram',
+    label: 'Instagram — ElanX Beverages',
+    title: 'Instagram · ElanX Beverages',
+    href: 'https://instagram.com/elanxbeverages',
+    icon: MEDIA.instagramLogo,
+    alt: 'Instagram',
+    external: true,
+  },
+] as const
+
 const pageFromPath = (): Page => {
   if (window.location.pathname.startsWith('/products')) return 'products'
   if (window.location.pathname.startsWith('/about')) return 'about'
   return 'home'
-}
-
-const flavorFromSearch = (): Flavor => {
-  const params = new URLSearchParams(window.location.search)
-  const id = params.get('flavor')
-  return FLAVORS.find((item) => item.id === id) ?? FLAVORS[0]
 }
 
 function HeroTopBar({
@@ -55,6 +84,15 @@ function HeroTopBar({
   onNavigate: (page: Page, flavorId?: string) => void
 }) {
   const [menuOpen, setMenuOpen] = useState(false)
+
+  useEffect(() => {
+    if (!menuOpen) return
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMenuOpen(false)
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [menuOpen])
 
   const go = (next: Page) => {
     setMenuOpen(false)
@@ -73,7 +111,7 @@ function HeroTopBar({
             aria-label="ElanX Beverages on Instagram"
             title="Instagram — ElanX Beverages"
           >
-            <InstagramIcon size={13} />
+            <InstagramIcon size={16} strokeWidth={2.2} />
           </a>
           <a
             href="mailto:elanx.beverages@gmail.com"
@@ -81,27 +119,27 @@ function HeroTopBar({
             aria-label="Email ElanX Beverages"
             title="elanx.beverages@gmail.com"
           >
-            <Mail size={13} strokeWidth={2} />
+            <Mail size={16} strokeWidth={2.2} />
           </a>
           <a
-            href="https://wa.me/918339094094?text=Hi%20ElanX%2C%20I%27d%20like%20to%20know%20more."
+            href={whatsappHref(WHATSAPP_MESSAGES.general)}
             target="_blank"
             rel="noreferrer"
             className="social-circle"
             aria-label="WhatsApp ElanX Beverages"
-            title="WhatsApp +91 83390 94094"
+            title={`WhatsApp ${WHATSAPP_NUMBER}`}
           >
-            <MessageCircle size={13} strokeWidth={2} />
+            <MessageCircle size={16} strokeWidth={2.2} />
           </a>
         </div>
 
         <button
           type="button"
-          className="brand-pill"
+          className="brand-logo-btn"
           onClick={() => go('home')}
           aria-label="ElanX Beverages Home"
         >
-          ELANX
+          <BrandLogo variant="transparent" size="md" decorative />
         </button>
 
         <nav className="hero-nav-pills" aria-label="Primary navigation">
@@ -143,13 +181,22 @@ function HeroTopBar({
           <button type="button" onClick={() => go('about')}>
             Our story &amp; Contact
           </button>
-          <a
-            href="https://wa.me/918339094094?text=Hi%20ElanX%2C%20I%27d%20like%20to%20know%20more."
-            target="_blank"
-            rel="noreferrer"
-          >
-            WhatsApp +91 83390 94094
-          </a>
+          <div className="mobile-drawer__apps" aria-label="Connect channels">
+            {CONNECT_APPS.map((app) => (
+              <a
+                key={app.id}
+                href={app.href}
+                className="mobile-drawer__app"
+                aria-label={app.label}
+                title={app.title}
+                target={app.external ? '_blank' : undefined}
+                rel={app.external ? 'noreferrer' : undefined}
+                onClick={() => setMenuOpen(false)}
+              >
+                <img src={app.icon} alt={app.alt} decoding="async" />
+              </a>
+            ))}
+          </div>
         </div>
       )}
     </header>
@@ -158,39 +205,39 @@ function HeroTopBar({
 
 function FlavorPedestalCard({
   flavor,
-  selected = false,
   ctaLabel = 'LEARN MORE',
   onSelect,
 }: {
   flavor: Flavor
-  selected?: boolean
   ctaLabel?: string
-  onSelect: (flavor: Flavor) => void
+  onSelect?: (flavor: Flavor) => void
 }) {
   return (
     <article
-      className={`flavor-card ${selected ? 'flavor-card--selected' : ''}`}
+      className="flavor-card"
       style={{ backgroundColor: flavor.cardBg }}
     >
-      <img
-        src={flavor.image}
-        alt={`ElanX ${flavor.name} carton on studio pedestal`}
-        className="flavor-card__img"
-        loading="lazy"
-      />
       <div className="flavor-card__top">
         <h3>{flavor.name}</h3>
         <p>{flavor.tagline}</p>
       </div>
-      <button
-        type="button"
-        className="flavor-card__cta"
-        style={{ backgroundColor: flavor.ctaBg }}
-        onClick={() => onSelect(flavor)}
-      >
-        <span>{ctaLabel}</span>
-        <ArrowRight size={12} strokeWidth={2.5} />
-      </button>
+      <img
+        src={flavor.image}
+        alt={`ElanX ${flavor.name} can`}
+        className="flavor-card__img"
+        loading="lazy"
+      />
+      {onSelect && (
+        <button
+          type="button"
+          className="flavor-card__cta"
+          style={{ backgroundColor: flavor.ctaBg }}
+          onClick={() => onSelect(flavor)}
+        >
+          <span>{ctaLabel}</span>
+          <ArrowRight size={12} strokeWidth={2.5} />
+        </button>
+      )}
     </article>
   )
 }
@@ -202,7 +249,7 @@ function PillMarqueeRow({
   items: typeof PILL_ROW_ONE
   reverse?: boolean
 }) {
-  const loopItems = [...items, ...items]
+  const loopItems = [...items, ...items, ...items, ...items]
   return (
     <div className="pill-row">
       <div className={`pill-track ${reverse ? 'pill-track--reverse' : ''}`}>
@@ -229,45 +276,47 @@ function HomePage({
 }) {
   return (
     <main className="page-home">
-      <section className="hero-stage">
-        <div className="hero-media-wrap" aria-hidden="true">
-          <img
-            src={MEDIA.heroCartons}
-            alt=""
-            className="hero-media"
-          />
-        </div>
-
-        <HeroTopBar page="home" onNavigate={onNavigate} />
-
-        <div className="container hero-grid">
-          <div className="hero-copy">
-            <h1>
-              Your day’s favorite
-              <br />
-              sparkling drink
-            </h1>
-            <p>
-              ElanX is the refreshing soft drink you’ll actually finish and crave again tomorrow.
-            </p>
-            <div className="hero-play-wrap">
-              <PlayStoryBadge onClick={onOpenStory} />
-            </div>
-          </div>
-
-          <div className="hero-mobile-pack">
+      <div className="hero-fold">
+        <section className="hero-stage">
+          <div className="hero-media-wrap" aria-hidden="true">
             <img
               src={MEDIA.heroCartons}
-              alt="ElanX Lemon, Cola, and Orange cartons"
+              alt=""
+              className="hero-media"
             />
           </div>
-        </div>
-      </section>
 
-      <section className="pill-marquee-band" aria-label="ElanX highlights">
-        <PillMarqueeRow items={PILL_ROW_ONE} />
-        <PillMarqueeRow items={PILL_ROW_TWO} reverse />
-      </section>
+          <HeroTopBar page="home" onNavigate={onNavigate} />
+
+          <div className="container hero-grid">
+            <div className="hero-copy">
+              <h1>
+                Your day’s favorite
+                <br />
+                sparkling drink
+              </h1>
+              <p>
+                ElanX is the refreshing soft drink you’ll actually finish and crave again tomorrow.
+              </p>
+              <div className="hero-play-wrap">
+                <PlayStoryBadge onClick={onOpenStory} />
+              </div>
+            </div>
+
+            <div className="hero-mobile-pack">
+              <img
+                src={MEDIA.heroMobileCartons}
+                alt="Chilled ElanX Lemon, Cola, and Orange cans"
+              />
+            </div>
+          </div>
+        </section>
+
+        <section className="pill-marquee-band" aria-label="ElanX highlights">
+          <PillMarqueeRow items={PILL_ROW_ONE} />
+          <PillMarqueeRow items={PILL_ROW_TWO} reverse />
+        </section>
+      </div>
 
       <section className="benefits-section" id="benefits">
         <div className="container benefits-inner">
@@ -299,24 +348,27 @@ function HomePage({
 
               <article className="bento-tile bento-tile--tall-right bento-tile--photo">
                 <img
-                  src={MEDIA.bentoHandPink}
-                  alt="Hand holding ElanX Orange carton against coral backdrop"
+                  src={MEDIA.productsLineup}
+                  alt="Five hands holding ElanX Blueberry, Coffee, Cola, Lemon, and Orange cans against blue clouds and sky"
+                  style={{ objectPosition: 'center' }}
                   loading="lazy"
                 />
               </article>
 
               <article className="bento-tile bento-tile--tall-left bento-tile--photo">
                 <img
-                  src={MEDIA.bentoSkyHands}
-                  alt="Three hands holding ElanX Lemon, Orange, and Cola cartons against blue sky"
+                  src={MEDIA.bentoTableTrio}
+                  alt="ElanX Cola, Lemon, and Orange cans on a sunlit café table with citrus slices and ice"
+                  style={{ objectPosition: '50% 48%' }}
                   loading="lazy"
                 />
               </article>
 
               <article className="bento-tile bento-tile--photo">
                 <img
-                  src={MEDIA.bentoFlatlay}
-                  alt="ElanX Orange, Cola, and Blueberry cartons with fresh fruit and roasted coffee beans"
+                  src={MEDIA.bentoGardenLineup}
+                  alt="ElanX Lemon, Cola, Coffee Cola, and Blueberry cans chilled with fruit, coffee beans, and ice"
+                  style={{ objectPosition: '50% 55%' }}
                   loading="lazy"
                 />
               </article>
@@ -324,14 +376,15 @@ function HomePage({
               <article className="bento-tile bento-tile--coral">
                 <h3>Fizz never tasted this good</h3>
                 <p>
-                  Bright cartons, clean refreshment, zero dull pours. Built to brighten the shelf.
+                  Bright cans, clean refreshment, zero dull pours. Built to brighten the shelf.
                 </p>
               </article>
 
               <article className="bento-tile bento-tile--photo">
                 <img
-                  src={MEDIA.bentoGrid}
-                  alt="Diagonal grid of ElanX Orange, Cola, Lemon, Blueberry, and Coffee Cola cartons"
+                  src={MEDIA.bentoGoldenStack}
+                  alt="Stacked ElanX Lemon, Coffee Cola, Cola, and Blueberry cans in warm golden light"
+                  style={{ objectPosition: '50% 48%' }}
                   loading="lazy"
                 />
               </article>
@@ -394,9 +447,12 @@ function HomePage({
           </div>
 
           <div className="audience-strip">
-            <span>
-              Built for young adults, families, restaurants, cafés, supermarkets &amp; distributors
-            </span>
+            <div className="audience-strip__brand">
+              <BrandLogo variant="badge" size="xs" decorative />
+              <span>
+                Built for young adults, families, restaurants, cafés, supermarkets &amp; distributors
+              </span>
+            </div>
             <button
               type="button"
               className="audience-strip__link"
@@ -415,22 +471,10 @@ function HomePage({
 }
 
 function ProductsPage({
-  initialFlavor,
   onNavigate,
 }: {
-  initialFlavor: Flavor
-  onNavigate: (page: Page, flavorId?: string) => void
+  onNavigate: (page: Page) => void
 }) {
-  const [selected, setSelected] = useState<Flavor>(initialFlavor)
-
-  useEffect(() => {
-    setSelected(initialFlavor)
-  }, [initialFlavor])
-
-  const handleSelectCard = (flavor: Flavor) => {
-    setSelected(flavor)
-  }
-
   return (
     <main className="page-products">
       <section className="subhero">
@@ -446,7 +490,7 @@ function ProductsPage({
             </h1>
             <p>
               Five distinct flavours crafted for retail coolers, cafés, restaurants, and joyful
-              everyday refreshment. Select any carton below to inspect its flavour profile.
+              everyday refreshment.
             </p>
             <div className="subhero__actions">
               <button
@@ -458,7 +502,7 @@ function ProductsPage({
                 <ArrowUpRight size={15} />
               </button>
               <a
-                href="https://wa.me/918339094094?text=Hi%20ElanX%2C%20I%27d%20like%20product%20and%20pricing%20details."
+                href={whatsappHref(WHATSAPP_MESSAGES.products)}
                 target="_blank"
                 rel="noreferrer"
                 className="pill-btn pill-btn--cream"
@@ -470,14 +514,12 @@ function ProductsPage({
           </div>
 
           <div className="subhero__preview">
-            <div className="subhero__card" style={{ backgroundColor: selected.cardBg }}>
+            <div className="subhero__card subhero__card--lineup">
               <img
-                src={selected.image}
-                alt={`Selected ElanX ${selected.name} carton`}
+                src={MEDIA.bentoTableTrio}
+                alt="ElanX Cola, Lemon, and Orange cans on a sunlit café table with citrus slices and ice"
               />
-              <span className="subhero__tag">
-                {selected.code} / {selected.name}
-              </span>
+              <span className="subhero__tag">ELANX · 05 FLAVOURS</span>
             </div>
           </div>
         </div>
@@ -500,9 +542,6 @@ function ProductsPage({
               <FlavorPedestalCard
                 key={flavor.id}
                 flavor={flavor}
-                selected={selected.id === flavor.id}
-                ctaLabel={selected.id === flavor.id ? 'SELECTED' : 'SELECT'}
-                onSelect={handleSelectCard}
               />
             ))}
           </div>
@@ -513,12 +552,15 @@ function ProductsPage({
 
       <section className="range-summary-band">
         <div className="container range-summary-band__inner">
-          <div>
-            <span className="pill-eyebrow">FOR RETAIL &amp; HOSPITALITY</span>
-            <h2>
-              <strong>Five flavours.</strong>
-              <span>One shelf-ready range.</span>
-            </h2>
+          <div className="range-summary-band__lead">
+            <BrandLogo variant="badge" size="sm" decorative />
+            <div>
+              <span className="pill-eyebrow">FOR RETAIL &amp; HOSPITALITY</span>
+              <h2>
+                <strong>Five flavours.</strong>
+                <span>One shelf-ready range.</span>
+              </h2>
+            </div>
           </div>
           <button
             type="button"
@@ -565,14 +607,14 @@ function AboutPage({
 
         <div className="container subhero__grid">
           <div className="subhero__copy">
-            <span className="pill-eyebrow pill-eyebrow--hero">OUR STORY • FOUNDED BY SUHANA SHABNAM</span>
+            <span className="pill-eyebrow pill-eyebrow--hero">OUR STORY • FOUNDED BY DR. SUHANA SHABNAM</span>
             <h1>
               Good energy
               <br />
               runs deep
             </h1>
             <p>
-              Founded by Suhana Shabnam, ElanX Beverages was created to make everyday soft drinks
+              Founded by Dr. Suhana Shabnam, ElanX Beverages was created to make everyday soft drinks
               feel more joyful, more expressive, and more memorable on every table and shelf.
             </p>
             <div className="subhero__actions">
@@ -594,8 +636,8 @@ function AboutPage({
           <div className="subhero__preview">
             <div className="subhero__card subhero__card--story">
               <img
-                src={MEDIA.bentoSkyHands}
-                alt="Three hands holding ElanX cartons in the sky"
+                src={MEDIA.productsLineup}
+                alt="Five hands holding ElanX Blueberry, Coffee, Cola, Lemon, and Orange cans against blue sky"
               />
               <span className="subhero__tag">ELANX BEVERAGES</span>
             </div>
@@ -614,6 +656,14 @@ function AboutPage({
                 <strong>A modern brand</strong>
                 <span>with a human pulse</span>
               </h2>
+              <div className="brand-lockup">
+                <BrandLogo variant="badge" size="sm" decorative />
+                <span className="brand-lockup__meta">
+                  ElanX Beverages
+                  <br />
+                  Founded by Dr. Suhana Shabnam
+                </span>
+              </div>
             </div>
             <div className="story-copy">
               <p className="story-copy__lead">
@@ -621,7 +671,7 @@ function AboutPage({
                 brings people to the same table, and makes a familiar moment feel fresh.
               </p>
               <p>
-                Led by founder Suhana Shabnam, ElanX Beverages brings classic crowd favourites
+                Led by founder Dr. Suhana Shabnam, ElanX Beverages brings classic crowd favourites
                 alongside distinctive twists like Coffee Cola and Blueberry in clean, vibrant
                 cartons made to shine in hand and on shelf.
               </p>
@@ -698,17 +748,17 @@ function AboutPage({
                   <strong>elanx.beverages@gmail.com</strong>
                 </div>
               </a>
-              <a href="tel:+918339094094">
+              <a href={`tel:${WHATSAPP_TEL}`}>
                 <span className="contact-links__icon">
                   <Phone size={16} />
                 </span>
                 <div>
                   <small>PHONE &amp; WHATSAPP</small>
-                  <strong>+91 83390 94094 (8339094094)</strong>
+                  <strong>{WHATSAPP_NUMBER}</strong>
                 </div>
               </a>
               <a
-                href="https://wa.me/918339094094?text=Hi%20ElanX%20Beverages%2C%20I%27d%20like%20to%20enquire%20about%20your%20drinks."
+                href={whatsappHref(WHATSAPP_MESSAGES.contact)}
                 target="_blank"
                 rel="noreferrer"
               >
@@ -817,7 +867,7 @@ function Footer({
 }) {
   return (
     <>
-      <WaveDivider topColor={topWaveColor} bottomColor="#36140c" />
+      <WaveDivider topColor={topWaveColor} bottomColor="#0f1842" />
       <footer className="site-footer">
         <div className="container">
           <div className="footer-hero-row">
@@ -830,19 +880,26 @@ function Footer({
                 will thank you for.
               </h2>
               <p>
-                Founded by Suhana Shabnam · Refresh your energy across Orange, Cola, Lemon,
+                Founded by Dr. Suhana Shabnam · Refresh your energy across Orange, Cola, Lemon,
                 Blueberry &amp; Coffee Cola.
               </p>
             </div>
 
             <div className="footer-cta-block">
-              <button
-                type="button"
-                className="brand-pill brand-pill--footer"
-                onClick={() => onNavigate('home')}
-              >
-                ELANX
-              </button>
+              <div className="footer-logos-row">
+                <button
+                  type="button"
+                  className="brand-logo-btn brand-logo-btn--footer"
+                  onClick={() => onNavigate('home')}
+                  aria-label="ElanX Beverages Home"
+                >
+                  <BrandLogo variant="badge" size="lg" decorative />
+                </button>
+
+                <div className="footer-made-in-oman">
+                  <img src={MEDIA.madeInOman} alt="Made in Oman — صُنع في عُمان" decoding="async" />
+                </div>
+              </div>
               <button
                 type="button"
                 className="pill-btn pill-btn--cream"
@@ -883,26 +940,26 @@ function Footer({
 
             <div>
               <span>Connect</span>
-              <a href="mailto:elanx.beverages@gmail.com">elanx.beverages@gmail.com</a>
-              <a
-                href="https://wa.me/918339094094"
-                target="_blank"
-                rel="noreferrer"
-              >
-                WhatsApp / +91 83390 94094
-              </a>
-              <a
-                href="https://instagram.com/elanxbeverages"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Instagram · ElanX Beverages
-              </a>
+              <div className="footer-connect-apps" aria-label="Connect channels">
+                {CONNECT_APPS.map((app) => (
+                  <a
+                    key={app.id}
+                    href={app.href}
+                    className="footer-app-btn"
+                    aria-label={app.label}
+                    title={app.title}
+                    target={app.external ? '_blank' : undefined}
+                    rel={app.external ? 'noreferrer' : undefined}
+                  >
+                    <img src={app.icon} alt={app.alt} decoding="async" />
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
 
           <div className="footer-bottom">
-            <span>© 2025 ElanX Beverages</span>
+            <span>© 2026 ElanX Beverages</span>
             <div className="footer-legal">
               <button type="button" onClick={() => onLegal('privacy')}>
                 Privacy
@@ -914,7 +971,17 @@ function Footer({
                 Disclaimer
               </button>
             </div>
-            <span>Taste the difference</span>
+            <span className="footer-credit">
+              Built by{' '}
+              <a
+                href="https://growitate.com"
+                target="_blank"
+                rel="noreferrer"
+                className="footer-credit__link"
+              >
+                GROWITATE
+              </a>
+            </span>
           </div>
         </div>
       </footer>
@@ -957,18 +1024,21 @@ function StoryReelModal({
         <div className="story-modal__media">
           <img
             src={MEDIA.bentoFlatlay}
-            alt="ElanX Orange, Cola, and Blueberry cartons surrounded by fresh fruit and coffee beans"
+            alt="ElanX Orange, Coffee, and Blueberry cans surrounded by fresh fruit and coffee beans"
           />
         </div>
 
         <div className="story-modal__body">
-          <span className="pill-eyebrow">THE ELANX EXPERIENCE</span>
+          <div className="modal-brand-row">
+            <BrandLogo variant="badge" size="xs" decorative />
+            <span className="pill-eyebrow">THE ELANX EXPERIENCE</span>
+          </div>
           <h2>
             <strong>Five bold pours.</strong>
             <span>One unmistakable lift.</span>
           </h2>
           <p>
-            Created by Suhana Shabnam, ElanX Beverages crafts vibrant soft drinks built for
+            Created by Dr. Suhana Shabnam, ElanX Beverages crafts vibrant soft drinks built for
             everyday enjoyment, café culture, and retail shelves — Orange, Cola, Lemon, Blueberry,
             and Coffee Cola.
           </p>
@@ -1013,7 +1083,10 @@ function LegalModal({ legalKey, onClose }: { legalKey: LegalKey; onClose: () => 
         >
           <X size={18} />
         </button>
-        <span className="pill-eyebrow">{content.kicker}</span>
+        <div className="modal-brand-row">
+          <BrandLogo variant="badge" size="xs" decorative />
+          <span className="pill-eyebrow">{content.kicker}</span>
+        </div>
         <h2>{content.title}</h2>
         {content.paragraphs.map((paragraph) => (
           <p key={paragraph}>{paragraph}</p>
@@ -1029,14 +1102,12 @@ function LegalModal({ legalKey, onClose }: { legalKey: LegalKey; onClose: () => 
 
 function App() {
   const [page, setPage] = useState<Page>(pageFromPath)
-  const [selectedFlavor, setSelectedFlavor] = useState<Flavor>(flavorFromSearch)
   const [legalKey, setLegalKey] = useState<LegalKey | null>(null)
   const [storyOpen, setStoryOpen] = useState(false)
 
   useEffect(() => {
     const handlePop = () => {
       setPage(pageFromPath())
-      setSelectedFlavor(flavorFromSearch())
     }
     window.addEventListener('popstate', handlePop)
     document.body.style.overflow = legalKey || storyOpen ? 'hidden' : ''
@@ -1050,10 +1121,6 @@ function App() {
     const basePath = next === 'home' ? '/' : `/${next}`
     const path = flavorId ? `${basePath}?flavor=${encodeURIComponent(flavorId)}` : basePath
     window.history.pushState({}, '', path)
-    if (flavorId) {
-      const found = FLAVORS.find((item) => item.id === flavorId)
-      if (found) setSelectedFlavor(found)
-    }
     setPage(next)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
@@ -1065,9 +1132,7 @@ function App() {
       {page === 'home' && (
         <HomePage onNavigate={navigate} onOpenStory={() => setStoryOpen(true)} />
       )}
-      {page === 'products' && (
-        <ProductsPage initialFlavor={selectedFlavor} onNavigate={navigate} />
-      )}
+      {page === 'products' && <ProductsPage onNavigate={navigate} />}
       {page === 'about' && <AboutPage onNavigate={navigate} />}
 
       <Footer
